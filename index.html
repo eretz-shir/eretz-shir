@@ -33,22 +33,34 @@ h1{font-family:var(--display);font-weight:400;font-size:1.35rem;margin:0}
 .chip.on{color:var(--bg);background:var(--accent);border-color:var(--accent);font-weight:800}
 .sign::before{content:'';position:absolute;inset:6px;border:4px solid var(--sign-fg);border-radius:10px;pointer-events:none}
 .sign{position:relative;background:var(--sign);color:var(--sign-fg);border-radius:0;padding:24px 26px 22px;box-shadow:0 1px 3px rgba(0,0,0,.25);display:grid;gap:6px;min-height:190px}
-.sign .layer{display:flex;gap:8px;align-items:center;font-size:.9rem;opacity:.92}
+.sign .layer{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:.9rem;opacity:.92}
+.backloc{min-height:34px;padding:2px 12px;border-radius:17px;background:transparent;color:var(--sign-fg);border:1.5px solid var(--sign-fg);font-family:var(--sign-font);font-weight:400;font-size:.85rem}
 .dot{width:11px;height:11px;border-radius:50%;background:var(--general);display:inline-block}
+.dot.heartdot{width:auto;height:auto;background:transparent;color:#d6457a;font-size:1.05rem;line-height:1}
 .dot.l1{background:#7ee2ad}.dot.l2{background:#ffc75e}
 .sign{font-family:var(--sign-font)}
 .sign .title{font-family:var(--sign-font);font-weight:400;font-size:clamp(1.9rem,7vw,2.8rem);line-height:1.1;text-wrap:balance}
 .sign .perf{font-size:1.1rem;opacity:.9}
 .sign .story{font-size:.95rem;opacity:.85;margin-top:4px}
-.next{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px;display:grid;gap:4px}
-.next .lbl{font-size:.75rem;letter-spacing:.06em;color:var(--muted)}
+.navbox{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:grid;gap:8px}
+.navbox .destbar{margin:0}.navbox .destbar input{background:var(--bg)}
+.nextrow{display:grid;gap:4px}.nextrow .lbl{font-size:.75rem;letter-spacing:.06em;color:var(--muted)}
+.navline{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 6px;font-size:.88rem;line-height:1.5}
+.navline .destinfo{font-weight:600}.navline .destinfo:not([hidden])::after{content:'|';margin-inline-start:6px;color:var(--muted);font-weight:400}
+.navline .nlbl{color:var(--muted)}.navline .ahead small{color:var(--muted);font-size:.8em}
+.navline .ahead{display:inline;font-size:inherit}.navline .ahead span{border:0;padding:0;font-size:inherit;border-radius:0}
+.navline .ahead span+span::before{content:'|';margin:0 6px;color:var(--muted)}
+.navbox .status{font-size:.8rem}
+.pinkheart{color:#d6457a}
+.favtools #favPlay{background:#fff;border:1.5px solid #d6457a;color:#d6457a;border-radius:999px;padding:4px 18px}.favtools #favPlay.on{background:#fdeef3}
+.favtools{display:flex;align-items:center;gap:10px;margin-top:8px}.favtools button{min-height:44px;padding:6px 16px;font-family:var(--sign-font);font-weight:400}
 .ahead{display:flex;flex-wrap:wrap;gap:6px}
 .ahead span{font-size:.85rem;border:1px solid var(--line);border-radius:8px;padding:2px 8px}
 .controls{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
 .controls .primary{grid-column:span 2}
 .controls button{font-family:var(--sign-font);font-weight:400;letter-spacing:.01em;font-size:.95rem;white-space:nowrap}
 button.flag{border-color:var(--warn);color:var(--warn)}
-button.love.on{background:#c2456b;border-color:#c2456b;color:#fff}
+button.love.on{background:#d6457a;border-color:#d6457a;color:#fff}
 .hist{display:grid;gap:0}
 .hist .it{display:grid;grid-template-columns:auto 1fr auto;gap:4px 10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
 .hist .it:last-child{border-bottom:0}
@@ -58,6 +70,8 @@ button.love.on{background:#c2456b;border-color:#c2456b;color:#fff}
 .hist button{min-height:44px;padding:6px 12px;font-size:.9rem}
 .hist .heart{min-height:44px;min-width:44px;padding:0;font-size:1.2rem;background:transparent;border-color:transparent;color:var(--muted)}
 .hist .heart.on{color:#e0587f}
+.hist .it.fav{grid-template-columns:1fr auto}.hist .it.fav .meta,.hist .it.fav .cred{grid-column:1}
+.hist .acts{grid-row:span 3;display:grid;gap:6px;align-self:start}.hist .trash{min-height:40px;color:var(--muted);background:transparent}
 .tabs{display:flex;gap:6px;margin-top:8px}
 .tabs button{min-height:40px;padding:6px 14px;font-size:.9rem;font-weight:600}
 .tabs button[aria-pressed="true"]{background:var(--accent);color:#1b1407;border-color:var(--accent)}
@@ -70,15 +84,16 @@ button.love.on{background:#c2456b;border-color:#c2456b;color:#fff}
 .toast .reasons button.on{background:var(--warn);border-color:var(--warn);color:#fff}
 .toast>*{min-width:0}.toast .noterow{display:flex;gap:6px;min-width:0}.toast .noterow input{flex:1;min-width:0;width:100%;min-height:44px;padding:6px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}.toast .noterow button{min-height:44px;padding:6px 14px;font-family:var(--sign-font);font-weight:400}
 .sendfb{display:block;margin:4px auto 0;min-height:44px;padding:6px 16px;font-family:var(--sign-font);font-weight:400;font-size:.95rem;background:transparent;border-style:dashed}
-.sendbar{background:#fff7e6;border:1px solid var(--accent);border-radius:12px;padding:10px 14px;margin:0 0 12px;display:grid;gap:8px}.sendbar .row{display:flex;gap:8px}.sendbar button{min-height:44px;padding:6px 18px;font-family:var(--sign-font);font-weight:400}.sendbar #sendBarGo{background:var(--accent);border-color:var(--accent);color:#1b1407}
-.destbar{position:relative;display:flex;gap:6px;margin:12px 0 10px}
-.destbar input{flex:1;min-width:0;min-height:48px;padding:8px 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel);font-family:var(--sign-font);font-size:1.05rem}
-.destbar #destX{min-height:48px;padding:6px 14px;font-weight:400}
-.destlist{position:absolute;top:52px;inset-inline:0;z-index:20;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.18);overflow:hidden}
+.sendbar{background:#fff7e6;border:1px solid var(--accent);border-radius:12px;padding:10px 14px;margin:4px 0 0;display:grid;gap:8px}.sendbar .row{display:flex;gap:8px}.sendbar button{min-height:44px;padding:6px 18px;font-family:var(--sign-font);font-weight:400}.sendbar #sendBarGo{background:var(--accent);border-color:var(--accent);color:#1b1407}
+.destbar{position:relative;display:flex;gap:6px}
+.destbar input{flex:1;min-width:0;min-height:40px;padding:4px 12px;border:1px solid var(--line);border-radius:12px;background:var(--panel);font-family:var(--sign-font);font-size:.95rem}
+.destbar #destX{min-height:40px;padding:4px 12px;font-weight:400}
+.destlist{position:absolute;top:44px;inset-inline:0;z-index:20;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.18);overflow:hidden}
 .destlist button{display:block;width:100%;text-align:start;border:0;border-bottom:1px solid var(--line);border-radius:0;min-height:46px;padding:8px 14px;font-weight:400}
 .destlist button span{opacity:.6;font-size:.85rem;margin-inline-start:8px}
-.destinfo{margin:-2px 4px 10px;font-size:.92rem}
-.fbline{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}.fbline .sendfb{margin:4px 0 0}
+.destinfo{font-size:.92rem}
+.fbline{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}.sendfb{display:inline-flex;align-items:center;gap:6px;position:relative}.sendfb .plane{transform:scaleX(-1)}
+.badge{position:absolute;top:-8px;inset-inline-end:-8px;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:#d62d2d;color:#fff;font:600 .75rem/20px var(--body);text-align:center}.fbline .sendfb{margin:4px 0 0}
 .sugbox{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:grid;gap:8px;margin-top:8px}.sugbox>*{min-width:0}
 .sugbox input,.sugbox textarea{width:100%;box-sizing:border-box;min-height:44px;padding:6px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
 .sugbox .cats{display:flex;flex-wrap:wrap;gap:6px}.sugbox .cats button{min-height:40px;padding:6px 12px;font-weight:600;font-size:.9rem}
@@ -113,11 +128,10 @@ textarea{width:100%;min-height:90px;background:var(--bg);border:1px solid var(--
 </head>
 <body>
 <div class="wrap">
-  <header><h1>ארץ שיר</h1><span class="chip" id="modeChip">נסיעה חופשית</span></header>
-  <div class="sendbar" id="sendBar" hidden><span id="sendBarMsg"></span><div class="row"><button id="sendBarGo">שליחה</button><button id="sendBarLater">אחר כך</button></div></div>
+  <header><h1>ארץ שיר</h1><span class="chip" id="modeChip" hidden>נסיעה חופשית</span></header>
 
   <section class="sign" id="sign" aria-live="polite">
-    <div class="layer"><span class="dot" id="dot"></span><span id="why">לחצו "יוצאים לדרך" כדי להתחיל</span></div>
+    <div class="layer"><span class="dot" id="dot"></span><span id="why">לחצו "יוצאים לדרך" כדי להתחיל</span><button class="backloc" id="backLoc" hidden>נגן לי שירים לפי המיקום שלי</button></div>
     <div class="title" id="title">ארץ שיר</div>
     <div class="perf" id="perf">נגן לי שירים לפי המיקום שלי</div>
     <div class="story" id="story"></div>
@@ -126,13 +140,6 @@ textarea{width:100%;min-height:90px;background:var(--bg);border:1px solid var(--
       <span class="cred" id="cred"></span>
     </div>
   </section>
-
-  <div class="destbar"><input type="text" id="destIn" enterkeyhint="go" placeholder="רוצים לספר לי לאן אתם נוסעים?" autocomplete="off" aria-label="יעד הנסיעה"><button id="destX" hidden aria-label="ביטול היעד">✕</button><div class="destlist" id="destList" hidden></div></div>
-  <section class="next">
-    <span class="lbl">בהמשך הדרך</span>
-    <div class="ahead" id="ahead"><span>מחכה למיקום…</span></div>
-  </section>
-  <div class="small destinfo" id="destInfo" hidden></div>
 
   <div class="controls">
     <button class="primary" id="go">יוצאים לדרך</button>
@@ -143,7 +150,16 @@ textarea{width:100%;min-height:90px;background:var(--bg);border:1px solid var(--
   </div>
   <div class="toast" id="toast" hidden><span id="toastMsg"></span><div class="reasons" id="reasons"></div><div class="noterow" id="noteRow" hidden><input type="text" id="noteIn" placeholder="הערה (לא חובה), למשל: השיר על הגליל, לא על כאן" aria-label="הערה"><button id="noteOk">שמירה</button></div></div>
 
-  <div class="fbline"><button class="sendfb" id="sugOpen">הצעת שיר</button><button class="sendfb" id="sendFb" hidden>שליחת משוב (<span id="sendN">0</span>)</button></div>
+  <section class="navbox">
+  <div class="destbar"><input type="text" id="destIn" enterkeyhint="go" placeholder="רוצים לספר לי לאן אתם נוסעים?" autocomplete="off" aria-label="יעד הנסיעה"><button id="destX" hidden aria-label="ביטול היעד">✕</button><div class="destlist" id="destList" hidden></div></div>
+    <div class="navline"><span class="destinfo" id="destInfo" hidden></span><span class="nlbl">בהמשך:</span><span class="ahead" id="ahead"><span>מחכה למיקום…</span></span></div>
+    <div class="status" id="status"><span>מהירות: <b id="spd">—</b></span><span hidden><b id="gps">לא פעיל</b><b id="near"></b></span></div>
+  </section>
+
+  <div class="player"><div id="yt"></div></div>
+
+  <div class="fbline"><button class="sendfb" id="sugOpen">הצעת שיר</button><button class="sendfb" id="sendFb"><svg class="plane" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M2 11.5 21 3l-6.5 18-3.2-7.3L2 11.5Zm9.3 2.2 2.2 5 4.3-11.9-6.5 6.9Zm-.9-.9 6.6-6.9L5.3 11.3l5.1 1.5Z" fill="currentColor"/></svg> שליחת משובים<span class="badge" id="sendN" hidden>0</span></button></div>
+  <div class="sendbar" id="sendBar" hidden><span id="sendBarMsg"></span><div class="row"><button id="sendBarGo">שליחה</button><button id="sendBarLater">אחר כך</button></div></div>
   <div class="sugbox" id="sugBox" hidden>
     <b>הצעת שיר</b>
     <input type="text" id="sugT" placeholder="שם השיר" aria-label="שם השיר">
@@ -154,20 +170,21 @@ textarea{width:100%;min-height:90px;background:var(--bg);border:1px solid var(--
     <textarea id="sugE" rows="2" placeholder="הסבר (לא חובה): למה השיר מתאים?" aria-label="הסבר"></textarea>
     <div class="row"><button id="sugSave">שמירה</button><button id="sugCancel">ביטול</button><span class="small" id="sugMsg"></span></div>
   </div>
-  <div class="status" id="status"><span>מיקום: <b id="gps">לא פעיל</b></span><span>מהירות: <b id="spd">—</b></span><span>קרוב: <b id="near">—</b></span></div>
 
-  <div class="player"><div id="yt"></div></div>
-
-  <details id="histBox">
-    <summary>שירים ששמעתי</summary>
-    <div class="tabs"><button id="tabAll" aria-pressed="true">כל השירים</button><button id="tabFav" aria-pressed="false">♥ אהבתי</button></div>
+  <details id="todayBox">
+    <summary>השירים ששמעתי היום</summary>
     <div class="hist" id="hist"></div>
   </details>
 
-  <details id="settings">
-    <summary>הגדרות ומשובים</summary>
+  <details id="favBox">
+    <summary><span class="pinkheart">♥</span> משירי ארץ אהבתי</summary>
+    <div class="row favtools"><button id="favPlay">▶ ניגון הפלייליסט שלי</button><span class="small" id="favN"></span></div>
+    <div class="hist" id="favs"></div>
+  </details>
+
+  <details id="settings" class="tools">
+    <summary>כלים ליוצרת</summary>
     <div class="set">
-      <details class="tools"><summary>כלים ליוצרת</summary><div class="set">
       <div class="row"><label for="route">מסלול</label>
         <select id="route"></select>
         <button id="rev" style="min-height:46px;padding:8px 12px">הפוך כיוון</button>
@@ -181,11 +198,9 @@ textarea{width:100%;min-height:90px;background:var(--bg);border:1px solid var(--
       <div class="row"><button id="exp">ייצוא מסלולים מוקלטים</button><button id="imp">ייבוא מסלול</button></div>
       <textarea id="io" hidden aria-label="מסלולים בפורמט טקסט"></textarea>
       <div class="row" id="ioRow" hidden><button id="copy">העתקה</button><button id="doImp">הוספה מהטקסט</button><span class="small" id="ioMsg"></span></div>
-      </div></details>
       <div class="row"><button id="fbExp">משובים מהדרך (<span id="fbN">0</span>)</button><button id="fbClear">מחיקת משובים</button></div>
       <textarea id="fbIo" hidden aria-label="משובים מהדרך" style="direction:rtl"></textarea>
       <div class="row" id="fbRow" hidden><button id="fbCopy">העתקה</button><button id="fbShare">שליחה</button><span class="small" id="fbMsg"></span></div>
-      <div><span class="small">מה התנגן</span><div class="log" id="log"></div></div>
     </div>
   </details>
   <p class="small">אב טיפוס. השירים מתנגנים מיוטיוב, ולכן המסך צריך להישאר דלוק בזמן הנסיעה. בנסיעה: הטלפון בתושבת, ולא נוגעים בזמן נהיגה.</p>
@@ -323,27 +338,42 @@ function findSong(pid,t){return (SONGS[pid]||[]).find(x=>x.t===t)}
 function addPlayed(r){if(r.replay)return;PLAYED.unshift({pid:r.s.pid,t:r.s.t,where:whereLine(r),time:Date.now()});PLAYED=PLAYED.slice(0,300);LS.set('eretz_played',PLAYED);renderHist()}
 function toggleFav(s){const k=key(s);if(FAVS[k])delete FAVS[k];else FAVS[k]={pid:s.pid,t:s.t,time:Date.now()};LS.set('eretz_favs',FAVS);if(current)render();renderHist()}
 function playSong(s){current={s,lvl:0,why:'',replay:true,pl:null};render();playCurrent();if(!started){started=true;$('go').textContent='השהייה';['skip','alt','flag','love'].forEach(i=>$(i).disabled=false)}window.scrollTo({top:0,behavior:'smooth'})}
+const today=()=>new Date().toDateString();
+PLAYED=PLAYED.filter(p=>new Date(p.time).toDateString()===today());LS.set('eretz_played',PLAYED);
+function histItem(s,meta,fav){const d=document.createElement('div');d.className='it'+(fav?' fav':'');
+  const h=document.createElement('button');h.className='heart'+(isFav(s)?' on':'');h.textContent='♥';h.setAttribute('aria-label',isFav(s)?'הסרה מהפלייליסט':'הוספה לפלייליסט');h.onclick=()=>toggleFav(s);
+  const t=document.createElement('div');t.className='t';t.textContent=s.t+(s.p?' · '+s.p:'');
+  const pl=document.createElement('button');pl.textContent='▶';pl.setAttribute('aria-label','ניגון');pl.onclick=()=>{PLQ=null;playSong(s)};
+  const c=document.createElement('div');c.className='cred';c.textContent=credit(s);
+  const m=document.createElement('div');m.className='meta';m.textContent=meta||'';
+  const yl=document.createElement('a');yl.className='link small';yl.href='https://www.youtube.com/watch?v='+s.y;yl.target='_blank';yl.rel='noopener';yl.textContent='ביוטיוב';if(m.textContent)m.append(' · ');m.append(yl);
+  if(fav){const col=document.createElement('div');col.className='acts';const tr=document.createElement('button');tr.className='trash';tr.setAttribute('aria-label','הסרה מהפלייליסט');
+    tr.innerHTML='<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M9 3h6l1 2h4v2H4V5h4l1-2Zm-3 6h12l-1 12H7L6 9Zm4 2v8h1.5v-8H10Zm3.5 0v8H15v-8h-1.5Z" fill="currentColor"/></svg>';
+    tr.onclick=()=>toggleFav(s);col.append(pl,tr);d.append(t,col)}else d.append(h,t,pl);if(c.textContent)d.append(c);if(s.x){const xx=document.createElement('div');xx.className='meta';xx.textContent='מקומות בשיר: '+s.x.split(/,\s*/).join(', ');d.append(xx)}d.append(m);return d}
 function renderHist(){const box=$('hist');box.innerHTML='';const seen=new Set();
-  const items=histTab==='fav'?Object.values(FAVS).sort((a,b)=>b.time-a.time).map(f=>({pid:f.pid,t:f.t,where:'',time:f.time})):PLAYED.filter(p=>{const k=p.pid+'|'+p.t;if(seen.has(k))return false;seen.add(k);return true});
-  if(!items.length){const e=document.createElement('p');e.className='small';e.textContent=histTab==='fav'?'עוד אין שירים אהובים. לחצו ♥ כשמתנגן שיר שאהבתם.':'עוד לא התנגנו שירים.';box.append(e);return}
-  for(const it of items.slice(0,120)){const s=findSong(it.pid,it.t);if(!s)continue;const d=document.createElement('div');d.className='it';
-    const h=document.createElement('button');h.className='heart'+(isFav(s)?' on':'');h.textContent='♥';h.setAttribute('aria-label',isFav(s)?'הסרה מהאהובים':'סימון כאהוב');h.onclick=()=>toggleFav(s);
-    const t=document.createElement('div');t.className='t';t.textContent=s.t+(s.p?' · '+s.p:'');
-    const pl=document.createElement('button');pl.textContent='נגני';pl.onclick=()=>playSong(s);
-    const c=document.createElement('div');c.className='cred';c.textContent=credit(s);
-    const m=document.createElement('div');m.className='meta';const dt=new Date(it.time);m.textContent=[it.where||(BYID[s.pid]?BYID[s.pid].n.split(' (')[0]:''),dt.toLocaleDateString('he-IL',{day:'numeric',month:'numeric'})+' '+dt.toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'})].filter(Boolean).join(' · ');
-    const yl=document.createElement('a');yl.className='link small';yl.href='https://www.youtube.com/watch?v='+s.y;yl.target='_blank';yl.rel='noopener';yl.textContent='ביוטיוב';m.append(' · ',yl);
-    d.append(h,t,pl);if(c.textContent)d.append(c);if(s.x){const xx=document.createElement('div');xx.className='meta';xx.textContent='מקומות בשיר: '+s.x.split(/,\s*/).join(', ');d.append(xx)}d.append(m);box.append(d)}}
-$('tabAll').onclick=()=>{histTab='all';$('tabAll').setAttribute('aria-pressed','true');$('tabFav').setAttribute('aria-pressed','false');renderHist()};
-$('tabFav').onclick=()=>{histTab='fav';$('tabFav').setAttribute('aria-pressed','true');$('tabAll').setAttribute('aria-pressed','false');renderHist()};
-function next(){const r=pick();if(!r){$('title').textContent='אין שיר זמין';return}current=r;addPlayed(r);played.add(r.s.t);HIST[r.s.t]=Date.now();LS.set('paskol_hist',HIST);render();playCurrent();log((r.lvl===1?'מקומי':r.lvl===2?'אזורי':'כללי')+' · '+r.s.t+' · '+r.why)}
+  const items=PLAYED.filter(p=>{const k=p.pid+'|'+p.t;if(seen.has(k)||new Date(p.time).toDateString()!==today())return false;seen.add(k);return true});
+  for(const it of items.slice(0,120)){const s=findSong(it.pid,it.t);if(!s)continue;const dt=new Date(it.time);
+    box.append(histItem(s,[it.where||(BYID[s.pid]?BYID[s.pid].n.split(' (')[0]:''),dt.toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'})].filter(Boolean).join(' · ')))}
+  if(!box.children.length){const e=document.createElement('p');e.className='small';e.textContent='היום עוד לא התנגנו שירים.';box.append(e)}
+  const fb=$('favs');fb.innerHTML='';const fs=Object.values(FAVS).sort((a,b)=>b.time-a.time).map(f=>findSong(f.pid,f.t)).filter(Boolean);
+  $('favN').textContent=fs.length===1?'שיר אחד':fs.length?fs.length+' שירים':'';$('favPlay').hidden=!fs.length;const on=!!(PLQ||(current&&current.plist));$('favPlay').textContent=on?'■ עצירת הפלייליסט שלי':'▶ ניגון הפלייליסט שלי';$('favPlay').classList.toggle('on',on);
+  if(!fs.length){const e=document.createElement('p');e.className='small';e.textContent='עוד אין כאן שירים. לחצו "♥ אהבתי" כשמתנגן שיר שאהבתם, והוא יישמר כאן.';fb.append(e)}
+  for(const s of fs)fb.append(histItem(s,BYID[s.pid]?BYID[s.pid].n.split(' (')[0]:'',true))}
+// My playlist: plays the loved songs in order, regardless of location, until it ends or is stopped.
+let PLQ=null;
+$('backLoc').onclick=()=>{PLQ=null;if(current)current.plist=false;$('backLoc').hidden=true;renderHist();next()};
+$('favPlay').onclick=()=>{if(PLQ||(current&&current.plist)){PLQ=null;if(current)current.plist=false;renderHist();if(started)next();return}
+  PLQ=Object.values(FAVS).sort((a,b)=>b.time-a.time).map(f=>findSong(f.pid,f.t)).filter(s=>s&&s.y);if(!PLQ.length){PLQ=null;return}playPL()};
+function playPL(){const s=PLQ.shift();if(!PLQ.length)PLQ=null;current={s,lvl:0,why:'',replay:true,plist:true,pl:null};render();playCurrent();
+  if(!started){started=true;$('go').textContent='השהייה';['skip','alt','flag','love'].forEach(i=>$(i).disabled=false)}renderHist();window.scrollTo({top:0,behavior:'smooth'})}
+function next(){if(current&&current.plist&&PLQ){playPL();return}const r=pick();if(!r){$('title').textContent='אין שיר זמין';return}current=r;addPlayed(r);played.add(r.s.t);HIST[r.s.t]=Date.now();LS.set('paskol_hist',HIST);render();playCurrent();log((r.lvl===1?'מקומי':r.lvl===2?'אזורי':'כללי')+' · '+r.s.t+' · '+r.why)}
 // ---- sign copy (storytelling tone)
 const NOART=/^(הר |הרי |הוד |הרצליה|הדר)/;
 function inP(n){return 'ב'+(n.startsWith('ה')&&!NOART.test(n)?n.slice(1):n)}
 const LANDLINE={'מדבר':'מדבר מסביב','ים וחוף':'הים לצד הדרך','שדות':'שדות לאורך הדרך','מטעים ופרדסים':'בין הפרדסים','יער וחורש':'בין העצים','הרים':'בין ההרים','עיר':'בתוך העיר','מטעי תמרים':'שירי נוף דקלים'};
 const VIEW={nebo:'ממול, מעבר לירדן: הר נבו',gilead:'ממול, מעבר לירדן: הרי הגלעד'};
 function joinV(t){const a=t.split(/,\s*/);if(a.length>4)return a.slice(0,3).join(', ')+' ועוד '+(a.length-3)+' מקומות';return a.length>1?a.slice(0,-1).join(', ')+' ו'+a[a.length-1]:t}
-function whereLine(r){if(r.replay)return 'מהשירים ששמעתם';const q=r.pl,n=q?q.n.split(' (')[0]:'';
+function whereLine(r){if(r.plist)return 'מהפלייליסט שלי';if(r.replay)return 'מהשירים ששמעתם';const q=r.pl,n=q?q.n.split(' (')[0]:'';
   if(r.lvl===1&&q){const d=pos?hk(pos,[q.la,q.lo]):0;return d<=q.r+0.3?'עכשיו '+inP(n):'בעוד '+Math.max(1,Math.round(d))+' ק"מ: '+n}
   if(r.lvl!==1&&r.s.l&&r.s.l.includes('מטעי תמרים'))return 'שירי נוף דקלים';
   if(r.lvl===2&&q){if(VIEW[q.id])return VIEW[q.id];if(/^(ים |הכנרת|כנרת)/.test(n))return 'לאורך '+n;return 'בדרך '+inP(n)}
@@ -359,14 +389,14 @@ function storyLine(r){const s=r.s,q=r.pl,n=q?q.n.split(' (')[0]:'';const st=[];l
   return st.join(' · ')}
 let cur_t=null;
 function credit(s){const a=[];if(s.w&&s.w===s.m)a.push('מילים ולחן: '+s.w);else{if(s.w)a.push('מילים: '+s.w);if(s.m)a.push('לחן: '+s.m)}if(s.wy)a.push('נכתב '+s.wy);if(s.yr)a.push('יצא '+s.yr);return a.join(' · ')}
-function render(){const r=current;if(!r)return;const nm=[...new Set([r.s.w,r.s.m].filter(Boolean).map(x=>x.replace(/\s*\([^)]*\)/g,'').trim()))].join(' · ');$('cred').textContent=nm;$('cred').setAttribute('aria-label',credit({...r.s,yr:'',wy:''}));$('shield').innerHTML='';if(r.s.wy){const o=document.createElement('span');o.className='oct';o.textContent=r.s.wy;$('shield').append(o)}$('shield').hidden=!r.s.wy;$('shield').setAttribute('aria-label','נכתב בשנת '+(r.s.wy||''));$('credrow').hidden=!(nm||r.s.wy);$('love').classList.toggle('on',isFav(r.s));$('love').setAttribute('aria-pressed',isFav(r.s));$('dot').className='dot l'+r.lvl;$('why').textContent=whereLine(r);
+function render(){const r=current;if(!r)return;$('backLoc').hidden=!r.plist;const nm=[...new Set([r.s.w,r.s.m].filter(Boolean).map(x=>x.replace(/\s*\([^)]*\)/g,'').trim()))].join(' · ');$('cred').textContent=nm;$('cred').setAttribute('aria-label',credit({...r.s,yr:'',wy:''}));$('shield').innerHTML='';if(r.s.wy){const o=document.createElement('span');o.className='oct';o.textContent=r.s.wy;$('shield').append(o)}$('shield').hidden=!r.s.wy;$('shield').setAttribute('aria-label','נכתב בשנת '+(r.s.wy||''));$('credrow').hidden=!(nm||r.s.wy);$('love').classList.toggle('on',!!r.lovedNow);$('love').setAttribute('aria-pressed',!!r.lovedNow);$('dot').className=r.plist?'dot heartdot':'dot l'+r.lvl;$('dot').textContent=r.plist?'♥':'';$('why').textContent=whereLine(r);
   $('title').textContent=r.s.t;{let p=(r.ai?r.s.alts[r.ai-1][1]:r.s.p)||'';let ry=r.ai?'':r.s.yr;const pm=p.match(/\s*\((\d{4})\)\s*$/);if(pm){p=p.slice(0,pm.index);ry=ry||pm[1]}$('perf').textContent=p;if(ry&&p){const e=document.createElement('span');e.className='ry';e.textContent=ry;$('perf').append(e)}}$('story').textContent=storyLine(r)}
 function renderAhead(){if(!pos)return;let pts=[];if(route){const {km,off}=routeKm(pos);if(off<2)for(let d=1;d<=25;d+=0.5)pts.push([routeAt(km+d),d])}
   else if(heading!=null&&speed>2)for(let d=1;d<=15;d+=0.5)pts.push([dest(pos,heading,d),d]);
   const seen=new Map();for(const [p,d] of pts)for(const q of LOCALS){if(!seen.has(q.id)&&hk(p,[q.la,q.lo])<=q.r)seen.set(q.id,[q,d])}
   const a=[...seen.values()].slice(0,5);$('ahead').innerHTML='';if(!a.length){const s=document.createElement('span');s.textContent=route||speed>2?'אין מקומות עם שיר בק"מ הקרובים':'מחכה לתנועה…';$('ahead').append(s);return}
-  for(const [q,d] of a){const s=document.createElement('span');s.textContent=q.n.split(' (')[0]+' · '+Math.round(d)+' ק"מ';$('ahead').append(s)}}
-function log(t){const d=document.createElement('div');d.textContent=new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'})+'  '+t;$('log').prepend(d)}
+  for(const [q,d] of a){const s=document.createElement('span');s.textContent=q.n.split(' (')[0];const k=document.createElement('small');k.textContent=' '+Math.max(1,Math.round(d))+' ק"מ';s.append(k);$('ahead').append(s)}}
+function log(t){if(!$('log'))return;const d=document.createElement('div');d.textContent=new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'})+'  '+t;$('log').prepend(d)}
 
 // ---- wake lock
 let wl=null;async function wake(){try{wl=await navigator.wakeLock.request('screen')}catch(e){}}
@@ -401,7 +431,7 @@ $('destX').onclick=()=>{DEST=null;$('destIn').value='';$('destX').hidden=true;$(
 function destLeft(){if(!route||!route.dest)return;const n=route.dest.n.split(' (')[0];
   if(pos&&hk(pos,[route.dest.la,route.dest.lo])<=route.dest.r){info('הגעתם ל'+n);if(speed*3.6<5&&!route.offered){route.offered=true;offerSend()}return}
   const kmNow=pos?routeKm(pos):{km:0,off:0};if(kmNow.off>2&&pos)return;const rem=Math.max(0,route.g.L-kmNow.km),sec=rem*1000/route.avg;
-  const h=Math.floor(sec/3600),m=Math.round(sec%3600/60);info('עד '+n+': '+Math.round(rem)+' ק"מ · כ־'+(h?h+':'+String(m).padStart(2,'0')+' שעות':Math.max(1,m)+' דקות'))}
+  const h=Math.floor(sec/3600),m=Math.round(sec%3600/60);info(Math.round(rem)+' ק"מ ליעד | כ־'+(h?h+':'+String(m).padStart(2,'0')+' שעות':Math.max(1,m)+' דקות'))}
 function info(t){$('destInfo').textContent=t;$('destInfo').hidden=!t}
 async function planRoute(){const d=DEST;if(!d)return;const from=pos||(demo.mult?DEMO_START:null);
   if(!from){info('הדרך ליעד תחושב כשיתקבל מיקום');return}PLAN_AT=Date.now();info('מחשב דרך…');
@@ -435,14 +465,14 @@ $('go').onclick=()=>{if(!started){started=true;$('go').textContent='השהייה
 $('skip').onclick=()=>next();
 // ---- feedback from the road
 function unsent(){return FB.filter(f=>!f.sent)}
-function fbSave(){LS.set('eretz_feedback',FB);const u=unsent().length;$('fbN').textContent=FB.length;$('sendN').textContent=u;$('sendFb').hidden=!u;if(!u)$('sendBar').hidden=true}
+function fbSave(){LS.set('eretz_feedback',FB);const u=unsent().length;$('fbN').textContent=FB.length;$('sendN').textContent=u;$('sendN').hidden=!u;if(!u&&!$('sendBar').hidden)$('sendBarMsg').textContent='אין כרגע משובים או הצעות לשליחה. תודה!'}
 // Send everything not sent yet through the phone's share sheet, then mark it as sent.
 async function sendUnsent(){const u=unsent();if(!u.length)return;const t='משובים והצעות לארץ שיר\n'+fbText(u);let ok=false;
   if(navigator.share){try{await navigator.share({title:'משובים והצעות · ארץ שיר',text:t});ok=true}catch(e){}}
   else{try{await navigator.clipboard.writeText(t);ok=true;toast('הטקסט הועתק. אפשר להדביק אותו בוואטסאפ או במייל ליוצרת.')}catch(e){}}
   if(ok){for(const f of u)f.sent=true;fbSave();$('sendBar').hidden=true}}
 let BAR_LATER=false;
-function offerSend(){if(BAR_LATER)return;const n=unsent().length;if(!n)return;
+function offerSend(force){if(!force)return;const n=unsent().length;$('sendBarGo').hidden=!n;if(!n){$('sendBarMsg').textContent='אין כרגע משובים או הצעות לשליחה.';$('sendBar').hidden=false;return}
   $('sendBarMsg').textContent=(n===1?'יש לך הצעה או משוב אחד שעוד לא נשלח':'יש לך '+n+' הצעות ומשובים שעוד לא נשלחו')+'. לשלוח ליוצרת?';$('sendBar').hidden=false}
 function fbAdd(type,extra){const r=current;if(!r)return null;const q=r.pl;const f={type,t:r.s.t,pid:r.s.pid,place:q?q.n.split(' (')[0]:'',why:whereLine(r),perf:r.s.p||'',vid:curVid(),
   at:pos?[+pos[0].toFixed(4),+pos[1].toFixed(4)]:null,route:route?route.name:'',time:new Date().toISOString(),...extra};FB.push(f);fbSave();return f}
@@ -460,11 +490,11 @@ $('alt').onclick=()=>{const r=current;if(!r)return;const n=r.s.alts.length;
 function fbText(only){const T={flag:'לא מתאים פה',alt:'חסר ביצוע אחר',suggest:'הצעת שיר'};return (only||FB).map(f=>[T[f.type]||f.type,f.t,f.perf,f.place||f.why,(f.reason||'')+(f.note?(f.reason?' · ':'')+'הערה: '+f.note:''),f.route,f.at?f.at.join(','):'',f.time.slice(0,16).replace('T',' ')].join(' | ')).join('\n')}
 $('fbExp').onclick=()=>{$('fbIo').hidden=false;$('fbRow').hidden=false;$('fbIo').value=fbText();$('fbMsg').textContent=FB.length?'אפשר לשלוח את הרשימה ל-Claude':'עוד אין משובים'};
 $('fbCopy').onclick=async()=>{try{await navigator.clipboard.writeText($('fbIo').value);$('fbMsg').textContent='הועתק'}catch(e){$('fbIo').select();$('fbMsg').textContent='יש לסמן ולהעתיק ידנית'}};
-$('sendFb').onclick=()=>sendUnsent();$('sendBarGo').onclick=()=>sendUnsent();$('sendBarLater').onclick=()=>{BAR_LATER=true;$('sendBar').hidden=true};fbSave();
+$('sendFb').onclick=()=>{if(!$('sendBar').hidden){$('sendBar').hidden=true;return}BAR_LATER=false;offerSend(true)};$('sendBarGo').onclick=()=>sendUnsent();$('sendBarLater').onclick=()=>{BAR_LATER=true;$('sendBar').hidden=true};fbSave();
 $('fbShare').onclick=async()=>{const t=fbText();if(navigator.share){try{await navigator.share({title:'משובים מהדרך · ארץ שיר',text:t})}catch(e){}}else $('fbCopy').onclick()};
 $('fbClear').onclick=()=>{if(!FB.length)return;if($('fbClear').dataset.sure){FB=[];BLOCK.clear();fbSave();$('fbIo').value='';$('fbClear').textContent='מחיקת משובים';delete $('fbClear').dataset.sure}else{$('fbClear').dataset.sure=1;$('fbClear').textContent='בטוחים? לחצו שוב'}};
 fbSave();
-$('love').onclick=()=>{if(current)toggleFav(current.s)};
+$('love').onclick=()=>{const r=current;if(!r)return;const k=key(r.s);if(!r.lovedNow){if(!FAVS[k]){FAVS[k]={pid:r.s.pid,t:r.s.t,time:Date.now()};LS.set('eretz_favs',FAVS)}r.lovedNow=true}else{delete FAVS[k];LS.set('eretz_favs',FAVS);r.lovedNow=false}render();renderHist()};
 renderHist();
 if('serviceWorker' in navigator){try{navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}}
 </script>
