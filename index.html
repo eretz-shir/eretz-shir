@@ -400,7 +400,10 @@ function log(t){if(!$('log'))return;const d=document.createElement('div');d.text
 
 // ---- wake lock
 let wl=null;async function wake(){try{wl=await navigator.wakeLock.request('screen')}catch(e){}}
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&started)wake()});
+// Coming back after a call or another app: resume the song unless it was paused with the pause button.
+let USER_PAUSED=false;
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState!=='visible'||!started)return;wake();
+  setTimeout(()=>{try{if(!USER_PAUSED&&ytReady&&current&&[2,-1,5].includes(yt.getPlayerState())){yt.playVideo();$('go').textContent='השהייה'}}catch(e){}},600)});
 
 // ---- recording
 let recording=false;
@@ -461,7 +464,7 @@ $('rev').onclick=()=>{if(!$('route').value)return;rev=!rev;setRoute($('route').v
 $('demo').onchange=e=>{demo.mult=+e.target.value;if(demo.mult){if(watchId!=null){navigator.geolocation.clearWatch(watchId);watchId=null}if(started)startDemo();else if(!route){const r=allRoutes()[0];$('route').value=r.id;setRoute(r.id,false)}}else{stopDemo();if(started)startGPS()}};
 $('go').onclick=()=>{if(!started){started=true;$('go').textContent='השהייה';$('skip').disabled=false;$('alt').disabled=false;$('flag').disabled=false;$('love').disabled=false;wake();if(demo.mult)startDemo();else startGPS();
     next();return}
-  if(ytReady){const st=yt.getPlayerState();if(st===1){yt.pauseVideo();$('go').textContent='המשך'}else{yt.playVideo();$('go').textContent='השהייה'}}};
+  if(ytReady){const st=yt.getPlayerState();if(st===1){yt.pauseVideo();USER_PAUSED=true;$('go').textContent='המשך'}else{yt.playVideo();USER_PAUSED=false;$('go').textContent='השהייה'}}};
 $('skip').onclick=()=>next();
 // ---- feedback from the road
 function unsent(){return FB.filter(f=>!f.sent)}
