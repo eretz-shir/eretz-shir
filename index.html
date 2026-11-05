@@ -57,7 +57,10 @@ h1{font-family:var(--display);font-weight:400;font-size:1.35rem;margin:0}
 .ahead{display:flex;flex-wrap:wrap;gap:6px}
 .ahead span{font-size:.85rem;border:1px solid var(--line);border-radius:8px;padding:2px 8px}
 .controls{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-.controls .primary{grid-column:span 2}
+.controls .primary{grid-column:span 3}
+.controls{grid-template-columns:1fr 1fr 1fr 64px}.controls #alt,.controls #love,.controls #flag{grid-column:auto}
+.controls #alt,.controls #love,.controls #flag{white-space:normal;line-height:1;padding:8px 6px}
+.controls .small-btn{font-size:.85rem;padding:6px 4px;white-space:normal;line-height:1;color:var(--muted)}
 .controls button{font-family:var(--sign-font);font-weight:400;letter-spacing:.01em;font-size:.95rem;white-space:nowrap}
 button.flag{border-color:var(--warn);color:var(--warn)}
 button.love.on{background:#d6457a;border-color:#d6457a;color:#fff}
@@ -143,10 +146,11 @@ textarea{width:100%;min-height:90px;background:var(--bg);border:1px solid var(--
 
   <div class="controls">
     <button class="primary" id="go">יוצאים לדרך</button>
-    <button id="skip" disabled>דילוג</button>
+    <button class="small-btn" id="skip" disabled>דילוג</button>
     <button id="alt" disabled>ביצוע אחר</button>
     <button class="love" id="love" disabled aria-pressed="false">♥ אהבתי</button>
     <button class="flag" id="flag" disabled>לא מתאים פה</button>
+    <button class="small-btn" id="prev" disabled>שיר<br>קודם</button>
   </div>
   <div class="toast" id="toast" hidden><span id="toastMsg"></span><div class="reasons" id="reasons"></div><div class="noterow" id="noteRow" hidden><input type="text" id="noteIn" placeholder="הערה (לא חובה), למשל: השיר על הגליל, לא על כאן" aria-label="הערה"><button id="noteOk">שמירה</button></div></div>
 
@@ -337,7 +341,7 @@ function isFav(s){return !!FAVS[key(s)]}
 function findSong(pid,t){return (SONGS[pid]||[]).find(x=>x.t===t)}
 function addPlayed(r){if(r.replay)return;PLAYED.unshift({pid:r.s.pid,t:r.s.t,where:whereLine(r),time:Date.now()});PLAYED=PLAYED.slice(0,300);LS.set('eretz_played',PLAYED);renderHist()}
 function toggleFav(s){const k=key(s);if(FAVS[k])delete FAVS[k];else FAVS[k]={pid:s.pid,t:s.t,time:Date.now()};LS.set('eretz_favs',FAVS);if(current)render();renderHist()}
-function playSong(s){current={s,lvl:0,why:'',replay:true,pl:null};render();playCurrent();if(!started){started=true;$('go').textContent='השהייה';['skip','alt','flag','love'].forEach(i=>$(i).disabled=false)}window.scrollTo({top:0,behavior:'smooth'})}
+function playSong(s){current={s,lvl:0,why:'',replay:true,pl:null};render();playCurrent();if(!started){started=true;$('go').textContent='השהייה';['skip','alt','flag','love','prev'].forEach(i=>$(i).disabled=false)}window.scrollTo({top:0,behavior:'smooth'})}
 const today=()=>new Date().toDateString();
 PLAYED=PLAYED.filter(p=>new Date(p.time).toDateString()===today());LS.set('eretz_played',PLAYED);
 function histItem(s,meta,fav){const d=document.createElement('div');d.className='it'+(fav?' fav':'');
@@ -365,8 +369,9 @@ $('backLoc').onclick=()=>{PLQ=null;if(current)current.plist=false;$('backLoc').h
 $('favPlay').onclick=()=>{if(PLQ||(current&&current.plist)){PLQ=null;if(current)current.plist=false;renderHist();if(started)next();return}
   PLQ=Object.values(FAVS).sort((a,b)=>b.time-a.time).map(f=>findSong(f.pid,f.t)).filter(s=>s&&s.y);if(!PLQ.length){PLQ=null;return}playPL()};
 function playPL(){const s=PLQ.shift();if(!PLQ.length)PLQ=null;current={s,lvl:0,why:'',replay:true,plist:true,pl:null};render();playCurrent();
-  if(!started){started=true;$('go').textContent='השהייה';['skip','alt','flag','love'].forEach(i=>$(i).disabled=false)}renderHist();window.scrollTo({top:0,behavior:'smooth'})}
-function next(){if(current&&current.plist&&PLQ){playPL();return}const r=pick();if(!r){$('title').textContent='אין שיר זמין';return}current=r;addPlayed(r);played.add(r.s.t);HIST[r.s.t]=Date.now();LS.set('paskol_hist',HIST);render();playCurrent();log((r.lvl===1?'מקומי':r.lvl===2?'אזורי':'כללי')+' · '+r.s.t+' · '+r.why)}
+  if(!started){started=true;$('go').textContent='השהייה';['skip','alt','flag','love','prev'].forEach(i=>$(i).disabled=false)}renderHist();window.scrollTo({top:0,behavior:'smooth'})}
+const BACK=[],FWD=[];
+function next(){if(current)BACK.push(current);if(BACK.length>50)BACK.shift();if(FWD.length){current=FWD.pop();render();playCurrent();return}if(current&&current.plist&&PLQ){playPL();return}const r=pick();if(!r){$('title').textContent='אין שיר זמין';return}current=r;addPlayed(r);played.add(r.s.t);HIST[r.s.t]=Date.now();LS.set('paskol_hist',HIST);render();playCurrent();log((r.lvl===1?'מקומי':r.lvl===2?'אזורי':'כללי')+' · '+r.s.t+' · '+r.why)}
 // ---- sign copy (storytelling tone)
 const NOART=/^(הר |הרי |הוד |הרצליה|הדר)/;
 function inP(n){return 'ב'+(n.startsWith('ה')&&!NOART.test(n)?n.slice(1):n)}
@@ -462,10 +467,11 @@ let rev=false;
 $('route').onchange=e=>{rev=false;setRoute(e.target.value,rev);renderAhead();if(demo.mult)startDemo()};
 $('rev').onclick=()=>{if(!$('route').value)return;rev=!rev;setRoute($('route').value,rev);if(demo.mult)startDemo()};
 $('demo').onchange=e=>{demo.mult=+e.target.value;if(demo.mult){if(watchId!=null){navigator.geolocation.clearWatch(watchId);watchId=null}if(started)startDemo();else if(!route){const r=allRoutes()[0];$('route').value=r.id;setRoute(r.id,false)}}else{stopDemo();if(started)startGPS()}};
-$('go').onclick=()=>{if(!started){started=true;$('go').textContent='השהייה';$('skip').disabled=false;$('alt').disabled=false;$('flag').disabled=false;$('love').disabled=false;wake();if(demo.mult)startDemo();else startGPS();
+$('go').onclick=()=>{if(!started){started=true;$('go').textContent='השהייה';$('skip').disabled=false;$('prev').disabled=false;$('alt').disabled=false;$('flag').disabled=false;$('love').disabled=false;wake();if(demo.mult)startDemo();else startGPS();
     next();return}
   if(ytReady){const st=yt.getPlayerState();if(st===1){yt.pauseVideo();USER_PAUSED=true;$('go').textContent='המשך'}else{yt.playVideo();USER_PAUSED=false;$('go').textContent='השהייה'}}};
 $('skip').onclick=()=>next();
+$('prev').onclick=()=>{const r=BACK.pop();if(!r){toast('זה השיר הראשון בנסיעה');return}if(current)FWD.push(current);current=r;render();playCurrent()};
 // ---- feedback from the road
 function unsent(){return FB.filter(f=>!f.sent)}
 function fbSave(){LS.set('eretz_feedback',FB);const u=unsent().length;$('fbN').textContent=FB.length;$('sendN').textContent=u;$('sendN').hidden=!u;if(!u&&!$('sendBar').hidden)$('sendBarMsg').textContent='אין כרגע משובים או הצעות לשליחה. תודה!'}
