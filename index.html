@@ -246,8 +246,26 @@ function pickRoute(){if(!route||!route.Z||!pos)return null;const {km,off}=routeK
     for(const z of zs){const s=choose(SONGS[z[0]]||[]);if(s){const q=BYID[z[0]];return {s,lvl,why:(q?q.n:z[0]).split(' (')[0]+(lvl===1&&zk(z)[0]>k0?' (מתקרבים)':''),pl:q}}}}
   for(const z of route.Z.filter(z=>z[3]===3&&ov(z)>0)){const s=LANDZ[z[0]]?choose(GENERAL.filter(x=>x.l&&x.l.includes(LANDZ[z[0]]))):choose(SONGS[z[0]]||[]);if(s)return {s,pl:LANDZ[z[0]]?null:BYID[z[0]],lvl:LANDZ[z[0]]?3:2,why:LANDZ[z[0]]?'נוף: '+LANDZ[z[0]]:(BYID[z[0]]?BYID[z[0]].n:'')}}
   return null}
+// Peripheral towns: the surrounding area and landscape come first; one song about the town itself per visit.
+const PERIPH={jericho:'valley90,deadsea,nebo|מדבר',beitshean:'gilboa',tiberias:'kinneret_lake,jordan_valley_n,ginosar',afula:'emek,afulanazareth,taanach',
+ safed:'galil|הרים',kiryatshmona:'hula,galil',hadera:'sharon,coastroad|ים וחוף',arad:'deadsea,negev|מדבר',dimona:'negev|מדבר',ashkelon:'lachish|ים וחוף',
+ gedera:'shfela_judea,lachish',yokneam:'carmel,emek',nahariya:'galil|ים וחוף',acre:'galil|ים וחוף',ashdod:'|ים וחוף',katzrin:'golan',karmiel:'galil',
+ netanya:'sharon,coastroad|ים וחוף',sderot:'gaza_border,negev',migdalhaemek:'emek',gan_yavne:'shfela_judea',nazareth:'emek',shechem:'shomron',qalqilya:'shomron',
+ krayot:'zevulun,carmel|ים וחוף',kfarsaba:'sharon',rosh_haayin:'sharon'};
+const TOWN_DONE={},TOWN_ROT={};
+function periphPick(q,spec){const [ids,land]=spec.split('|');const nm=q.n.split(' (')[0];
+  const own=()=>{const s=choose(SONGS[q.id]||[]);if(s){TOWN_DONE[q.id]=Date.now();return {s,lvl:1,why:nm,pl:q}}return null};
+  const fresh=!TOWN_DONE[q.id]||Date.now()-TOWN_DONE[q.id]>36e5*3;
+  if(fresh&&Math.random()<0.35){const r=own();if(r)return r}
+  const opts=[];if(land)opts.push(()=>{const s=choose(GENERAL.filter(x=>x.l&&x.l.includes(land)));return s?{s,lvl:2,why:'נוף: '+land+' · '+nm}:null});
+  for(const id of (ids||'').split(',').filter(Boolean))opts.push(()=>{const s=choose(SONGS[id]||[]),r=BYID[id];return s?{s,lvl:2,why:(r?r.n.split(' (')[0]:id),pl:r}:null});
+  const k=(TOWN_ROT[q.id]=(TOWN_ROT[q.id]||0)+1);const w=[0,0,1,0,1,2];/* first listed area gets about half the turns */
+  const first=w[k%w.length]%Math.max(1,opts.length);for(let i=0;i<opts.length;i++){const r=opts[(first+i)%opts.length]();if(r)return r}
+  return fresh?own():null}
 function pick(){const pr=pickRoute();if(pr)return pr;const sm=samples();
-  if(sm.length){for(const z of zonesHit(LOCALS,sm,0.6)){const s=choose(SONGS[z.q.id]);if(s)return {s,lvl:1,why:z.q.n.split(' (')[0]+(z.cur?'':' (מתקרבים)'),pl:z.q}}
+  if(sm.length){for(const z of zonesHit(LOCALS,sm,0.6)){const pr=PERIPH[z.q.id];
+      if(pr){const r=periphPick(z.q,pr);if(r)return r;continue}
+      const s=choose(SONGS[z.q.id]);if(s)return {s,lvl:1,why:z.q.n.split(' (')[0]+(z.cur?'':' (מתקרבים)'),pl:z.q}}
     for(const z of zonesHit(REGIONS,sm,0.3)){const s=choose(SONGS[z.q.id]);if(s)return {s,lvl:2,why:z.q.n.split(' (')[0],pl:z.q}}
     const lt=landAt(sm[Math.floor(sm.length/2)]);if(lt){const s=choose(GENERAL.filter(x=>x.l&&x.l.includes(lt)));if(s)return {s,lvl:3,why:'נוף: '+lt}}}
   const road=speed*3.6>50&&Math.random()<0.35?SONGS.general_road:null;const s=(road&&choose(road))||choose(GENERAL);return s?{s,lvl:3,why:s.pid==='general_road'?'שירי דרך':'שירי ארץ ישראל'}:null}
