@@ -271,7 +271,7 @@ function renderHist(){const box=$('hist');box.innerHTML='';const seen=new Set();
     const c=document.createElement('div');c.className='cred';c.textContent=credit(s);
     const m=document.createElement('div');m.className='meta';const dt=new Date(it.time);m.textContent=[it.where||(BYID[s.pid]?BYID[s.pid].n.split(' (')[0]:''),dt.toLocaleDateString('he-IL',{day:'numeric',month:'numeric'})+' '+dt.toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'})].filter(Boolean).join(' · ');
     const yl=document.createElement('a');yl.className='link small';yl.href='https://www.youtube.com/watch?v='+s.y;yl.target='_blank';yl.rel='noopener';yl.textContent='ביוטיוב';m.append(' · ',yl);
-    d.append(h,t,pl);if(c.textContent)d.append(c);d.append(m);box.append(d)}}
+    d.append(h,t,pl);if(c.textContent)d.append(c);if(s.x){const xx=document.createElement('div');xx.className='meta';xx.textContent='מקומות בשיר: '+s.x.split(/,\s*/).join(', ');d.append(xx)}d.append(m);box.append(d)}}
 $('tabAll').onclick=()=>{histTab='all';$('tabAll').setAttribute('aria-pressed','true');$('tabFav').setAttribute('aria-pressed','false');renderHist()};
 $('tabFav').onclick=()=>{histTab='fav';$('tabFav').setAttribute('aria-pressed','true');$('tabAll').setAttribute('aria-pressed','false');renderHist()};
 function next(){const r=pick();if(!r){$('title').textContent='אין שיר זמין';return}current=r;addPlayed(r);played.add(r.s.t);HIST[r.s.t]=Date.now();LS.set('paskol_hist',HIST);render();playCurrent();log((r.lvl===1?'מקומי':r.lvl===2?'אזורי':'כללי')+' · '+r.s.t+' · '+r.why)}
@@ -290,10 +290,9 @@ function storyLine(r){const s=r.s,q=r.pl,n=q?q.n.split(' (')[0]:'';const st=[];l
   if(s.f)st.push('על '+s.f+(s.r&&!s.r.startsWith('(')?', '+s.r:''));
   else if(s.e)st.push('השיר מספר על '+s.e);
   else if(n&&s.k==='W')st.push('השיר נכתב על '+n);
-  else if(n&&s.k==='M'){st.push('השיר מזכיר את '+n+(x?', וגם את '+joinV(x):''));x=''}
+  else if(n&&s.k==='M'){st.push('השיר מזכיר את '+n)}
   else if(n&&s.k==='A')st.push('שיר שקשור '+('ל'+(n.startsWith('ה')&&!NOART.test(n)?n.slice(1):n)));
   else if(n)st.push('שיר '+(r.lvl===2?'מהאזור':'על המקום'));
-  if(x)st.push('מוזכרים בו גם '+joinV(x));
   return st.join(' · ')}
 let cur_t=null;
 function credit(s){const a=[];if(s.w&&s.w===s.m)a.push('מילים ולחן: '+s.w);else{if(s.w)a.push('מילים: '+s.w);if(s.m)a.push('לחן: '+s.m)}if(s.wy)a.push('נכתב '+s.wy);if(s.yr)a.push('יצא '+s.yr);return a.join(' · ')}
