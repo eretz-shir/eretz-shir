@@ -5,4 +5,3 @@
 - האתר: https://eretz-shir.github.io/eretz-shir/
 - `index.html` – האפליקציה (כולל כל הנתונים)
 - `manifest.json`, `icon-*.png` – הוספה למסך הבית
-- `source.zip` – גיבוי של המאגר, הסקריפטים וההדמיה
