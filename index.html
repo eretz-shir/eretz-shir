@@ -287,7 +287,7 @@ function ctxNow(){const d=new Date(),h=d.getHours(),m=d.getMonth()+1,w=d.getDay(
   t.push(m===12||m<=2?'חורף וגשם':m<=5?'אביב':m<=8?'קיץ':'סתיו');if((w===5&&h>=16)||(w===6&&h<19))t.push('שבת');return t}
 const TIME_TAGS=['לילה','ערב','בוקר'];
 let HIST=LS.get('paskol_hist',{}),played=new Set(),bad=new Set();
-let FB=LS.get('eretz_feedback',[]);const BLOCK=new Set(FB.filter(f=>f.type==='flag'||(f.type==='note'&&/לא קשור למקום|שם השיר לא תואם/.test(f.reason||''))).map(f=>f.pid+'|'+f.t));
+let FB=LS.get('eretz_feedback',[]);const BLOCK=new Set(FB.filter(f=>f.type==='flag').map(f=>f.pid+'|'+f.t));
 function okDir(s){if(!s.d)return true;let toJ;if(route&&route.dest)toJ=route.toJ;else if(route&&['r2','r4'].includes(route.id))toJ=!route.rev;else return false;return s.d.startsWith('רק בנסיעה לירושלים')?toJ:s.d.startsWith('רק בנסיעה מירושלים')?!toJ:true}
 function choose(pool){const now=Date.now(),ctx=ctxNow();let best=null,bs=-1e9;
   for(const s of pool){if(!s.y||played.has(s.t)||bad.has(s.y)||!okDir(s)||BLOCK.has(s.pid+'|'+s.t))continue;let sc=Math.random()*2;const age=(now-(HIST[s.t]||0))/864e5;
@@ -492,11 +492,10 @@ let toastT=null;function toast(msg,reasons,onPick,onNote){$('toastMsg').textCont
   const nr=$('noteRow');nr.hidden=!onNote;$('noteIn').value='';$('noteOk').onclick=()=>{const v=$('noteIn').value.trim();if(v&&onNote)onNote(v);$('toast').hidden=true};
   $('toast').hidden=false;armToast(reasons&&reasons.length?15000:5000)}
 function armToast(ms){clearTimeout(toastT);toastT=setTimeout(()=>{if(document.activeElement!==$('noteIn')&&!$('noteIn').value.trim())$('toast').hidden=true;else armToast(8000)},ms||12000)}
-const REASONS=[['place','לא קשור למקום הזה'],['why','לא הבנתי את הקשר'],['alt','חסר ביצוע אחר'],['title','שם השיר לא תואם לסרטון'],['sound','סאונד באיכות נמוכה']];
-// "I have a comment": the song keeps playing; only "not related to this place" or a wrong video stop it and keep it from playing here again.
-$('flag').onclick=()=>{const f=fbAdd('note');if(!f)return;const cur=current;
-  toast('מה ההערה על "'+f.t+'"?',REASONS,(k,l)=>{f.reason=l;fbSave();
-    if((k==='place'||k==='title')&&current===cur){BLOCK.add(f.pid+'|'+f.t);toast('תודה. "'+f.t+'" לא יתנגן שוב '+(f.place?'ב'+f.place:'כאן')+'.');next()}},v=>{f.note=v;fbSave()})};
+const REASONS=[['place','לא קשור למקום הזה'],['why','לא הבנתי את הקשר'],['alt','חסר ביצוע אחר'],['title','שם השיר לא תואם לסרטון'],['sound','סאונד באיכות נמוכה'],['info','מידע על השיר לא מדויק'],['perfinfo','מידע על הביצוע לא מדויק']];
+// "I have a comment": only records the comment; the song keeps playing (skipping is the skip button's job).
+$('flag').onclick=()=>{const f=fbAdd('note');if(!f)return;
+  toast('מה ההערה על "'+f.t+'"?',REASONS,(k,l)=>{f.reason=l;fbSave()},v=>{f.note=v;fbSave()})};
 $('alt').onclick=()=>{const r=current;if(!r)return;const n=r.s.alts.length;
   if(!n){fbAdd('alt');toast('אין עוד ביצוע של השיר הזה במאגר. נרשם, ונוסיף ביצוע.');return}
   r.ai=((r.ai||0)+1)%(n+1);render();playCurrent();log('ביצוע אחר: '+r.s.t+' · '+($('perf').textContent||'ביצוע מקורי'))};
