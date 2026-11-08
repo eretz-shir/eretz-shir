@@ -60,6 +60,9 @@ h1{font-family:var(--display);font-weight:400;font-size:1.35rem;margin:0}
 .controls .primary{grid-column:span 3}
 .controls{grid-template-columns:1fr 1fr 1fr 64px}.controls #alt,.controls #love,.controls #flag{grid-column:auto}
 .controls #alt,.controls #love,.controls #flag{white-space:normal;line-height:1;padding:8px 6px}
+.controls #alt{position:relative}
+.controls #alt small{position:absolute;left:0;right:0;bottom:8px;font-size:.52rem;font-weight:400;opacity:.7;font-family:var(--body);line-height:1}
+.controls #alt.none{opacity:.55;font-size:.8rem;white-space:nowrap;padding-left:2px;padding-right:2px}
 .controls .small-btn{font-size:.85rem;padding:6px 4px;white-space:normal;line-height:1;color:var(--muted)}
 .controls button{font-family:var(--sign-font);font-weight:400;letter-spacing:.01em;font-size:.95rem;white-space:nowrap}
 button.flag{border-color:var(--warn);color:var(--warn)}
@@ -396,7 +399,11 @@ function storyLine(r){const s=r.s,q=r.pl,n=q?q.n.split(' (')[0]:'';const st=[];l
   return st.join(' · ')}
 let cur_t=null;
 function credit(s){const a=[];if(s.w&&s.w===s.m)a.push('מילים ולחן: '+s.w);else{if(s.w)a.push('מילים: '+s.w);if(s.m)a.push('לחן: '+s.m)}if(s.wy)a.push('נכתב '+s.wy);if(s.yr)a.push('יצא '+s.yr);return a.join(' · ')}
-function render(){const r=current;if(!r)return;$('backLoc').hidden=!r.plist;const nm=[...new Set([r.s.w,r.s.m].filter(Boolean).map(x=>x.replace(/\s*\([^)]*\)/g,'').trim()))].join(' · ');$('cred').textContent=nm;$('cred').setAttribute('aria-label',credit({...r.s,yr:'',wy:''}));$('shield').innerHTML='';if(r.s.wy){const o=document.createElement('span');o.className='oct';o.textContent=r.s.wy;$('shield').append(o)}$('shield').hidden=!r.s.wy;$('shield').setAttribute('aria-label','נכתב בשנת '+(r.s.wy||''));$('credrow').hidden=!(nm||r.s.wy);$('love').classList.toggle('on',!!r.lovedNow);$('love').setAttribute('aria-pressed',!!r.lovedNow);$('dot').className=r.plist?'dot heartdot':'dot l'+r.lvl;$('dot').textContent=r.plist?'♥':'';$('why').textContent=whereLine(r);
+function altLabel(){const r=current;const b=$('alt');if(!r){b.textContent='ביצוע אחר';return}const n=(r.s.alts||[]).length;
+  b.classList.toggle('none',!n);
+  if(!n){b.innerHTML='אין ביצוע אחר';return}
+  b.innerHTML='ביצוע אחר<small>'+(r.ai?(r.ai+1)+' מתוך '+(n+1):(n===1?'עוד ביצוע אחד':'עוד '+n+' ביצועים'))+'</small>'}
+function render(){const r=current;if(!r)return;setTimeout(altLabel,0);$('backLoc').hidden=!r.plist;const nm=[...new Set([r.s.w,r.s.m].filter(Boolean).map(x=>x.replace(/\s*\([^)]*\)/g,'').trim()))].join(' · ');$('cred').textContent=nm;$('cred').setAttribute('aria-label',credit({...r.s,yr:'',wy:''}));$('shield').innerHTML='';if(r.s.wy){const o=document.createElement('span');o.className='oct';o.textContent=r.s.wy;$('shield').append(o)}$('shield').hidden=!r.s.wy;$('shield').setAttribute('aria-label','נכתב בשנת '+(r.s.wy||''));$('credrow').hidden=!(nm||r.s.wy);$('love').classList.toggle('on',!!r.lovedNow);$('love').setAttribute('aria-pressed',!!r.lovedNow);$('dot').className=r.plist?'dot heartdot':'dot l'+r.lvl;$('dot').textContent=r.plist?'♥':'';$('why').textContent=whereLine(r);
   $('title').textContent=r.s.t;{let p=(r.ai?r.s.alts[r.ai-1][1]:r.s.p)||'';let ry=r.ai?'':r.s.yr;const pm=p.match(/\s*\((\d{4})\)\s*$/);if(pm){p=p.slice(0,pm.index);ry=ry||pm[1]}$('perf').textContent=p;if(ry&&p){const e=document.createElement('span');e.className='ry';e.textContent=ry;$('perf').append(e)}}$('story').textContent=storyLine(r)}
 function renderAhead(){if(!pos)return;let pts=[];if(route){const {km,off}=routeKm(pos);if(off<2)for(let d=1;d<=25;d+=0.5)pts.push([routeAt(km+d),d])}
   else if(heading!=null&&speed>2)for(let d=1;d<=15;d+=0.5)pts.push([dest(pos,heading,d),d]);
@@ -497,7 +504,7 @@ const REASONS=[['place','לא קשור למקום הזה'],['why','לא הבנת
 $('flag').onclick=()=>{const f=fbAdd('note');if(!f)return;
   toast('מה ההערה על "'+f.t+'"?',REASONS,(k,l)=>{f.reason=l;fbSave()},v=>{f.note=v;fbSave()})};
 $('alt').onclick=()=>{const r=current;if(!r)return;const n=r.s.alts.length;
-  if(!n){fbAdd('alt');toast('אין עוד ביצוע של השיר הזה במאגר. נרשם, ונוסיף ביצוע.');return}
+  if(!n){toast('לשיר הזה אין עדיין ביצוע אחר במאגר. אפשר לבקש דרך "יש לי הערה" ← "חסר ביצוע אחר".');return}
   r.ai=((r.ai||0)+1)%(n+1);render();playCurrent();log('ביצוע אחר: '+r.s.t+' · '+($('perf').textContent||'ביצוע מקורי'))};
 function fbText(only){const T={flag:'לא מתאים פה',note:'הערה',alt:'חסר ביצוע אחר',suggest:'הצעת שיר'};return (only||FB).map(f=>[T[f.type]||f.type,f.t,f.perf,f.place||f.why,(f.reason||'')+(f.note?(f.reason?' · ':'')+'הערה: '+f.note:''),f.route,f.at?f.at.join(','):'',f.time.slice(0,16).replace('T',' ')].join(' | ')).join('\n')}
 $('fbExp').onclick=()=>{$('fbIo').hidden=false;$('fbRow').hidden=false;$('fbIo').value=fbText();$('fbMsg').textContent=FB.length?'אפשר לשלוח את הרשימה ל-Claude':'עוד אין משובים'};
