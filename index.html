@@ -90,6 +90,7 @@ button.love.on{background:#d6457a;border-color:#d6457a;color:#fff}
 .toast .reasons button.on{background:var(--warn);border-color:var(--warn);color:#fff}
 .toast>*{min-width:0}.toast .noterow{display:flex;gap:6px;min-width:0}.toast .noterow input{flex:1;min-width:0;width:100%;min-height:44px;padding:6px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}.toast .noterow button{min-height:44px;padding:6px 14px;font-family:var(--sign-font);font-weight:400}
 .sendfb{display:block;margin:4px auto 0;min-height:44px;padding:6px 16px;font-family:var(--sign-font);font-weight:400;font-size:.95rem;background:transparent;border-style:dashed}
+.histtools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0}.histtools select{flex:1;min-width:0;width:auto;min-height:44px;font-size:1rem;padding:4px 8px;border-radius:10px}.histtools button{min-height:44px;padding:6px 14px;white-space:nowrap;flex:none}.histtools #histMsg:not(:empty){flex-basis:100%}
 .sendbar{background:#fff7e6;border:1px solid var(--accent);border-radius:12px;padding:10px 14px;margin:4px 0 0;display:grid;gap:8px}.sendbar .row{display:flex;gap:8px}.sendbar button{min-height:44px;padding:6px 18px;font-family:var(--sign-font);font-weight:400}.sendbar #sendBarGo{background:var(--accent);border-color:var(--accent);color:#1b1407}
 .destbar{position:relative;display:flex;gap:6px}
 .destbar input{flex:1;min-width:0;min-height:40px;padding:4px 12px;border:1px solid var(--line);border-radius:12px;background:var(--panel);font-family:var(--sign-font);font-size:.95rem}
@@ -180,7 +181,8 @@ textarea{width:100%;min-height:90px;background:var(--bg);border:1px solid var(--
   </div>
 
   <details id="todayBox">
-    <summary>השירים ששמעתי היום</summary>
+    <summary>השירים ששמעתי</summary>
+    <div class="row histtools"><select id="histDay" aria-label="בחירת יום"></select><button id="histShare">שיתוף הרשימה</button><span class="small" id="histMsg"></span></div>
     <div class="hist" id="hist"></div>
   </details>
 
@@ -201,11 +203,6 @@ textarea{width:100%;min-height:90px;background:var(--bg);border:1px solid var(--
         <select id="demo"><option value="0">כבוי (GPS אמיתי)</option><option value="1">נסיעה מדומה ×1</option><option value="10">נסיעה מדומה ×10</option><option value="40">נסיעה מדומה ×40</option></select>
       </div>
       <p class="small">בהדמיה הרכב "נוסע" במהירות 80 קמ"ש לאורך הדרך ליעד שנבחר, או לאורך המסלול שנבחר כאן. ×10 ו-×40 מקצרים גם את השירים, כדי לראות את כל המסלול מהר.</p>
-      <div class="row"><button class="rec" id="rec">הקלטת מסלול</button><span class="small">מקליט את הדרך שבה נוסעים, כדי שאוכל להכין ממנה מסלול</span></div>
-      <div class="row" id="saveRow" hidden><input type="text" id="recName" placeholder="שם המסלול, למשל: הביתה לגוש עציון"><button id="recSave">שמירת מסלול</button></div>
-      <div class="row"><button id="exp">ייצוא מסלולים מוקלטים</button><button id="imp">ייבוא מסלול</button></div>
-      <textarea id="io" hidden aria-label="מסלולים בפורמט טקסט"></textarea>
-      <div class="row" id="ioRow" hidden><button id="copy">העתקה</button><button id="doImp">הוספה מהטקסט</button><span class="small" id="ioMsg"></span></div>
       <div class="row"><button id="fbExp">משובים מהדרך (<span id="fbN">0</span>)</button><button id="fbClear">מחיקת משובים</button></div>
       <textarea id="fbIo" hidden aria-label="משובים מהדרך" style="direction:rtl"></textarea>
       <div class="row" id="fbRow" hidden><button id="fbCopy">העתקה</button><button id="fbShare">שליחה</button><span class="small" id="fbMsg"></span></div>
@@ -263,7 +260,6 @@ function onFix(p,spd,hdg,acc){
   {const t=Date.now();SPH.push([t,speed*3.6]);while(SPH.length&&SPH[0][0]<t-20*6e4)SPH.shift()}
   $('gps').textContent=acc!=null?('±'+Math.round(acc)+' מ\''):'מדומה';$('spd').textContent=Math.round(speed*3.6)+' קמ"ש';
   const nr=nearest(p);$('near').textContent=nr?nr.n.split(' (')[0]+' · '+nr.d.toFixed(1)+' ק"מ':'—';
-  if(recording){const last=track[track.length-1];if(!last||hk(last,p)>0.08)track.push([+p[0].toFixed(5),+p[1].toFixed(5)])}
   renderAhead();if(current)$('why').textContent=whereLine(current);
 }
 function nearest(p){let b=null;for(const q of LOCALS){const d=hk(p,[q.la,q.lo]);if(!b||d<b.d)b={n:q.n,d}}return b}
@@ -344,11 +340,20 @@ let PLAYED=LS.get('eretz_played',[]),FAVS=LS.get('eretz_favs',{}),histTab='all';
 const key=s=>s.pid+'|'+s.t;
 function isFav(s){return !!FAVS[key(s)]}
 function findSong(pid,t){return (SONGS[pid]||[]).find(x=>x.t===t)}
-function addPlayed(r){if(r.replay)return;PLAYED.unshift({pid:r.s.pid,t:r.s.t,where:whereLine(r),time:Date.now()});PLAYED=PLAYED.slice(0,300);LS.set('eretz_played',PLAYED);renderHist()}
+function addPlayed(r){if(r.replay)return;PLAYED.unshift({pid:r.s.pid,t:r.s.t,where:whereLine(r),time:Date.now()});PLAYED=PLAYED.slice(0,4000);LS.set('eretz_played',PLAYED);renderHist()}
 function toggleFav(s){const k=key(s);if(FAVS[k])delete FAVS[k];else FAVS[k]={pid:s.pid,t:s.t,time:Date.now()};LS.set('eretz_favs',FAVS);if(current)render();renderHist()}
 function playSong(s){current={s,lvl:0,why:'',replay:true,pl:null};render();playCurrent();if(!started){started=true;$('go').textContent='השהייה';['skip','alt','flag','love','prev'].forEach(i=>$(i).disabled=false)}window.scrollTo({top:0,behavior:'smooth'})}
 const today=()=>new Date().toDateString();
-PLAYED=PLAYED.filter(p=>new Date(p.time).toDateString()===today());LS.set('eretz_played',PLAYED);
+// History kept on this device for 90 days.
+PLAYED=PLAYED.filter(p=>Date.now()-p.time<90*864e5);LS.set('eretz_played',PLAYED);
+let HDAY=today();
+const DOW=['א','ב','ג','ד','ה','ו','ש'];
+function dayName(ds){const d=new Date(ds);const y=new Date();y.setDate(y.getDate()-1);
+  const base="יום "+DOW[d.getDay()]+"' "+d.getDate()+'.'+(d.getMonth()+1);
+  return ds===today()?'היום':ds===y.toDateString()?'אתמול':base}
+function dayItems(ds){const seen=new Set();return PLAYED.filter(p=>{const k=p.pid+'|'+p.t;if(seen.has(k)||new Date(p.time).toDateString()!==ds)return false;seen.add(k);return true}).reverse()}
+function fillDays(){const sel=$('histDay');const days=[today()];for(const p of PLAYED){const ds=new Date(p.time).toDateString();if(!days.includes(ds))days.push(ds)}
+  if(!days.includes(HDAY))HDAY=today();sel.innerHTML='';for(const ds of days){const o=document.createElement('option');o.value=ds;o.textContent=dayName(ds)+' ('+dayItems(ds).length+')';sel.append(o)}sel.value=HDAY;sel.hidden=days.length<2}
 function histItem(s,meta,fav){const d=document.createElement('div');d.className='it'+(fav?' fav':'');
   const h=document.createElement('button');h.className='heart'+(isFav(s)?' on':'');h.textContent='♥';h.setAttribute('aria-label',isFav(s)?'הסרה מהפלייליסט':'הוספה לפלייליסט');h.onclick=()=>toggleFav(s);
   const t=document.createElement('div');t.className='t';t.textContent=s.t+(s.p?' · '+s.p:'');
@@ -360,15 +365,23 @@ function histItem(s,meta,fav){const d=document.createElement('div');d.className=
     tr.innerHTML='<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M9 3h6l1 2h4v2H4V5h4l1-2Zm-3 6h12l-1 12H7L6 9Zm4 2v8h1.5v-8H10Zm3.5 0v8H15v-8h-1.5Z" fill="currentColor"/></svg>';
     tr.onclick=()=>toggleFav(s);col.append(pl,tr);d.append(t,col)}else d.append(h,t,pl);if(c.textContent)d.append(c);if(s.x){const xx=document.createElement('div');xx.className='meta';xx.textContent='מקומות בשיר: '+s.x.split(/,\s*/).join(', ');d.append(xx)}d.append(m);return d}
 function renderHist(){const box=$('hist');box.innerHTML='';const seen=new Set();
-  const items=PLAYED.filter(p=>{const k=p.pid+'|'+p.t;if(seen.has(k)||new Date(p.time).toDateString()!==today())return false;seen.add(k);return true});
-  for(const it of items.slice(0,120)){const s=findSong(it.pid,it.t);if(!s)continue;const dt=new Date(it.time);
+  fillDays();const items=dayItems(HDAY).reverse();$('histShare').hidden=!items.length;
+  for(const it of items.slice(0,300)){const s=findSong(it.pid,it.t);if(!s)continue;const dt=new Date(it.time);
     box.append(histItem(s,[it.where||(BYID[s.pid]?BYID[s.pid].n.split(' (')[0]:''),dt.toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'})].filter(Boolean).join(' · ')))}
-  if(!box.children.length){const e=document.createElement('p');e.className='small';e.textContent='היום עוד לא התנגנו שירים.';box.append(e)}
+  if(!box.children.length){const e=document.createElement('p');e.className='small';e.textContent=HDAY===today()?'היום עוד לא התנגנו שירים.':'אין שירים ביום הזה.';box.append(e)}
   const fb=$('favs');fb.innerHTML='';const fs=Object.values(FAVS).sort((a,b)=>b.time-a.time).map(f=>findSong(f.pid,f.t)).filter(Boolean);
   $('favN').textContent=fs.length===1?'שיר אחד':fs.length?fs.length+' שירים':'';$('favPlay').hidden=!fs.length;const on=!!(PLQ||(current&&current.plist));$('favPlay').textContent=on?'■ עצירת הפלייליסט שלי':'▶ ניגון הפלייליסט שלי';$('favPlay').classList.toggle('on',on);
   if(!fs.length){const e=document.createElement('p');e.className='small';e.textContent='עוד אין כאן שירים. לחצו "♥ אהבתי" כשמתנגן שיר שאהבתם, והוא יישמר כאן.';fb.append(e)}
   for(const s of fs)fb.append(histItem(s,BYID[s.pid]?BYID[s.pid].n.split(' (')[0]:'',true))}
 // My playlist: plays the loved songs in order, regardless of location, until it ends or is stopped.
+$('histDay').onchange=e=>{HDAY=e.target.value;$('histMsg').textContent='';renderHist()};
+$('histShare').onclick=async()=>{const items=dayItems(HDAY);if(!items.length)return;const d=new Date(HDAY);
+  const head='ארץ שיר · השירים ששמעתי '+(HDAY===today()?'היום, ':'ב')+"יום "+DOW[d.getDay()]+"' "+d.getDate()+'.'+(d.getMonth()+1)+'.'+d.getFullYear();
+  const lines=items.map((it,i)=>{const s=findSong(it.pid,it.t);if(!s)return '';const tm=new Date(it.time).toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
+    return (i+1)+'. '+s.t+(s.p?' · '+s.p:'')+' ('+[it.where||(BYID[s.pid]?BYID[s.pid].n.split(' (')[0]:''),tm].filter(Boolean).join(', ')+')\nhttps://youtu.be/'+s.y}).filter(Boolean);
+  const t=head+'\n\n'+lines.join('\n\n');
+  if(navigator.share){try{await navigator.share({title:'השירים ששמעתי · ארץ שיר',text:t});return}catch(e){if(e.name==='AbortError')return}}
+  try{await navigator.clipboard.writeText(t);$('histMsg').textContent='הרשימה הועתקה. אפשר להדביק בוואטסאפ או במייל'}catch(e){$('histMsg').textContent='לא הצלחתי להעתיק'}};
 let PLQ=null;
 $('backLoc').onclick=()=>{PLQ=null;if(current)current.plist=false;$('backLoc').hidden=true;renderHist();next()};
 $('favPlay').onclick=()=>{if(PLQ||(current&&current.plist)){PLQ=null;if(current)current.plist=false;renderHist();if(started)next();return}
@@ -419,16 +432,6 @@ let USER_PAUSED=false;
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState!=='visible'||!started)return;wake();
   setTimeout(()=>{try{if(!USER_PAUSED&&ytReady&&current&&[2,-1,5].includes(yt.getPlayerState())){yt.playVideo();$('go').textContent='השהייה'}}catch(e){}},600)});
 
-// ---- recording
-let recording=false;
-$('rec').onclick=()=>{recording=!recording;$('rec').classList.toggle('on',recording);$('rec').textContent=recording?'עצירת הקלטה':'הקלטת מסלול';
-  if(recording){track=pos?[[pos[0],pos[1]]]:[];log('הקלטת מסלול התחילה')}else{$('settings').open=true;$('saveRow').hidden=false;log('נקלטו '+track.length+' נקודות')}};
-$('recSave').onclick=()=>{if(track.length<3){$('recName').value='';$('recName').placeholder='המסלול קצר מדי. נסו שוב';return}const name=$('recName').value.trim()||('מסלול '+(RECS.length+1));
-  RECS.push({name,P:track});LS.set('paskol_routes',RECS);track=[];$('saveRow').hidden=true;$('recName').value='';fillRoutes();log('נשמר: '+name)};
-$('exp').onclick=()=>{$('io').hidden=false;$('ioRow').hidden=false;$('io').value=JSON.stringify(RECS);$('ioMsg').textContent=RECS.length?'אפשר לשלוח את הטקסט הזה ל-Claude':'עוד אין מסלולים מוקלטים'};
-$('imp').onclick=()=>{$('io').hidden=false;$('ioRow').hidden=false;$('io').value='';$('io').focus();$('ioMsg').textContent='הדביקו כאן מסלול ולחצו "הוספה"'};
-$('copy').onclick=async()=>{try{await navigator.clipboard.writeText($('io').value);$('ioMsg').textContent='הועתק'}catch(e){$('io').select();$('ioMsg').textContent='יש לסמן ולהעתיק ידנית'}};
-$('doImp').onclick=()=>{try{let v=JSON.parse($('io').value);if(!Array.isArray(v))v=[v];let n=0;for(const r of v)if(r&&r.name&&Array.isArray(r.P)&&r.P.length>1){RECS.push({name:r.name,P:r.P});n++}LS.set('paskol_routes',RECS);fillRoutes();$('ioMsg').textContent='נוספו '+n+' מסלולים'}catch(e){$('ioMsg').textContent='הטקסט לא בפורמט של מסלול'}};
 
 // ---- settings
 function fillRoutes(){const s=$('route'),v=s.value;s.innerHTML='<option value="">נסיעה חופשית (בלי מסלול)</option>'+allRoutes().map(r=>`<option value="${r.id}">${(r.rec?'מוקלט: ':'')+r.name.replace(/</g,'')}</option>`).join('');s.value=v}
